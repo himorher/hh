@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pt-app-deployment
+  labels:
+    app: pt-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pt-app
+  template:
+    metadata:
+      labels:
+        app: pt-app
+    spec:
+      containers:
+      - name: pt-app
+        image: bupmangnon/hihi:v3
+        ports:
+        - containerPort: 3000
+        envFrom:
+        - secretRef:
+           name: dotfile-secret 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-nodeport
+spec:
+  type: ClusterIP
+  selector:
+    app: pt-app
+  ports:
+     port: 3000
+      name: https
+      # By default and for convenience, the `targetPort` is set to
+      # the same value as the `port` field.
+      targetPort: 3000
+      # Optional field
+      # By default and for convenience, the Kubernetes control plane
+      # will allocate a port from a range (default: 30000-32767)
+   # - port: 443
+   #   name: https
+   #   targetPort: 3000

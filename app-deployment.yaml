@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pt-app-deployment
+  labels:
+    app: pt-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pt-app
+  template:
+    metadata:
+      labels:
+        app: pt-app
+    spec:
+      containers:
+      - name: pt-app
+        image: bupmangnon/hihi:v01
+        ports:
+        - containerPort: 3000
+        envFrom:
+        - secretRef:
+           name: dotfile-secret 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-clusterip
+spec:
+  type: ClusterIP
+  selector:
+    app: pt-app
+  ports:
+    - port: 3000
+      name: https
+      targetPort: 3000
+    - port: 443
+      name: hello
+      targetPort: 3000
